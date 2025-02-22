@@ -12,8 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class RabbitMQManager:
-    def __init__(self, _id):
-        self._id = _id
+    def __init__(self):
         self.task_manager = TaskManager()
         self.connection = None
         self.channel = None
@@ -53,7 +52,6 @@ class RabbitMQManager:
             queue_name,
             durable=False
         )
-        # await queue.bind(self.channel.default_exchange, routing_key=queue_name)
         await queue.consume(callback=callback)
 
         print(f"Listening for messages on {queue_name} queue")
