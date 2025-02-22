@@ -3,9 +3,13 @@ import os
 from managers.tasks import TaskManager
 import asyncio
 import json
+import time
+from threading import Thread
+from uuid import uuid4
 
 class RabbitMQManager:
-    def __init__(self):
+    def __init__(self, _id):
+        self._id = _id
         self.task_manager = TaskManager()
         self.connection = None
         self.channel = None
@@ -43,7 +47,22 @@ class RabbitMQManager:
         print(f"\n\n-----Task Finished-----")
         await message.ack()
 
+    async def heartbeat(self):
+        while True:
+            if not self.connection:
+                await self.init_connection()
+            message = json.dumps({"worker_id": self._id, "timestamp": time.time()})
+            await self.channel.default_exchange.publish(
+                aio_pika.Message(body=message.encode()),
+                routing_key='heartbeat',
+            )
+            print(f"Worker {self._id} sent heartbeat")
+            await asyncio.sleep(30)
+
 # # Testing Driver Code
 
-# rm = RabbitMQManager()
+# rm = RabbitMQManager(str(uuid4()))
+# thread = Thread(target=asyncio.run, args=(rm.heartbeat(),))
+# thread.start()
 # asyncio.run(rm.subscribe())
+# thread.join()
