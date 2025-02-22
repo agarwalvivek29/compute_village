@@ -1,6 +1,7 @@
 import json
 import docker
 import asyncio
+import os
 
 class TaskManager:
     def __init__(self):
@@ -15,7 +16,7 @@ class TaskManager:
                 image=task['image'],
                 environment=task['environment'],
                 volumes={
-                    f"/home/agarwalvivek29/compute_village/worker/outputs/{task['id']}": {
+                    f"{os.getcwd()}/outputs/{task['id']}": {
                         "bind": "/app",
                         "mode": "rw"
                     }
