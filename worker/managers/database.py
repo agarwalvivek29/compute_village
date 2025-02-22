@@ -11,10 +11,7 @@ class DatabaseManager:
 
     def insert(self, collection, data, _id=None):
         collection = self.db[collection]
-        if _id:
-            return collection.insert_one({"_id": _id, **data})
-        else:
-            return collection.update_one({"_id": _id}, {"$set": data}, upsert=True)
+        return collection.update_one({"_id": _id}, {"$set": data}, upsert=True)
         
     def create(self, collection, data):
         collection = self.db[collection]

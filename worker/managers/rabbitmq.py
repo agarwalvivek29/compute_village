@@ -6,6 +6,7 @@ import json
 import time
 from threading import Thread
 from uuid import uuid4
+from managers.database import DatabaseManager
 
 class RabbitMQManager:
     def __init__(self, _id):
@@ -14,6 +15,7 @@ class RabbitMQManager:
         self.connection = None
         self.channel = None
         self.queue = None
+        self.database_manager = DatabaseManager()
     
     async def init_connection(self):
         try:
@@ -45,9 +47,17 @@ class RabbitMQManager:
     
     async def callback(self, message: aio_pika.IncomingMessage):
         task = json.loads(message.body.decode("utf-8"))
+        print(f"Worker {self._id} received task: {task}")
+        print(type(task))
+        task['status'] = 'RUNNING'
+        task['worker_id'] = self._id
+        self.database_manager.insert(collection='tasks', data=task, _id=task['id'])
         print(f"\n\n-----Task Started-----")
         output = self.task_manager.run(task)
         print(f"\n\n-----Task Finished-----")
+        task['status'] = 'COMPLETED'
+        task['output'] = output
+        self.database_manager.insert(collection='tasks', data=task, _id=task['id'])
         await message.ack()
 
     async def heartbeat(self):
