@@ -11,7 +11,10 @@ class DatabaseManager:
 
     def insert(self, collection, data, _id=None):
         collection = self.db[collection]
-        return collection.update_one({"_id": _id}, {"$set": data}, upsert=True)
+        if _id:
+            return collection.insert_one({"_id": _id, **data})
+        else:
+            return collection.update_one({"_id": _id}, {"$set": data}, upsert=True)
         
     def create(self, collection, data):
         collection = self.db[collection]
@@ -24,3 +27,7 @@ class DatabaseManager:
     def get_all(self, collection):
         collection = self.db[collection]
         return collection.find()
+    
+    def update_worker_status(self, worker_id, status):
+        collection = self.db['workers']
+        return collection.update_one({"_id": worker_id}, {"$set": {"status": status}})

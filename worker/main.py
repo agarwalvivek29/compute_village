@@ -15,16 +15,7 @@ print(f"Worker registered with id: {worker_id}")
 
 worker = RabbitMQManager(worker_id)
 
-subscriber = Thread(target=asyncio.run, args=(worker.subscribe(),))
-heartbeat = Thread(target=asyncio.run, args=(worker.heartbeat(),))
-
-subscriber.start()
-print("-----Subscriber started-----")
-
-heartbeat.start()
-print("-----Heartbeat started-----")
-
-subscriber.join()
-heartbeat.join()
+print("-----Worker started-----")
+asyncio.run(worker.subscribe())
 
 print("-----Worker stopped-----")

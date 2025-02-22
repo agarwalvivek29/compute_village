@@ -7,11 +7,10 @@ class TaskManager:
     def __init__(self):
         self.docker_client = docker.from_env()
 
-    def run_docker_container(self, task_data):
+    def run_docker_container(self, task):
         try:
             print("\n\n-----Docker Container Running-----")
-            print(f"Task: {task_data}")
-            task = json.loads(task_data)
+            print(f"Task: {task}")
             container = self.docker_client.containers.run(
                 image=task['image'],
                 environment=task['environment'],
