@@ -19,7 +19,7 @@ class RabbitMQManager:
         try:
             self.connection = await aio_pika.connect_robust(
                 host=os.getenv('RABBITMQ_HOST', 'localhost'),
-                port=os.getenv('RABBITMQ_PORT', 5672),
+                port=int(os.getenv('RABBITMQ_PORT', 5672)),
                 login=os.getenv('RABBITMQ_USER', 'guest'),
                 password=os.getenv('RABBITMQ_PASSWORD', 'guest')
             )
