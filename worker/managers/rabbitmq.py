@@ -32,13 +32,16 @@ class RabbitMQManager:
     async def subscribe(self):
         if not self.connection:
             await self.init_connection()
+
+        heartbeat_task = asyncio.create_task(self.heartbeat())
         queue = await self.channel.declare_queue(
             self.queue,
             durable=True,
         )
-        await queue.consume(self.callback)
+        consume_task = asyncio.create_task(queue.consume(self.callback))
         print(f"Listening for messages on {self.queue} queue")
-        await asyncio.Event().wait()
+
+        await asyncio.gather(heartbeat_task, consume_task, asyncio.Event().wait())
     
     async def callback(self, message: aio_pika.IncomingMessage):
         task = json.loads(message.body.decode("utf-8"))
@@ -57,7 +60,7 @@ class RabbitMQManager:
                 routing_key='heartbeat',
             )
             print(f"Worker {self._id} sent heartbeat")
-            await asyncio.sleep(30)
+            await asyncio.sleep(10)
 
 # # Testing Driver Code
 
