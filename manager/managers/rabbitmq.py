@@ -78,11 +78,11 @@ class RabbitMQManager:
             print(f"Worker {worker_id} marked as active")
         self.workers[worker_id] = time.time()
 
-# Testing Driver Code
-async def main():
-    rm = RabbitMQManager(str(uuid4()))
-    await rm.publish({"image": "basepy_test", "environment": {"VAR": "value"}, "id": str(uuid4())})
-    await rm.subscribe("heartbeat", rm.process_heartbeat)
+# # Testing Driver Code
+# async def main():
+#     rm = RabbitMQManager(str(uuid4()))
+#     await rm.publish({"image": "basepy_test", "environment": {"VAR": "value"}, "id": str(uuid4())})
+#     await rm.subscribe("heartbeat", rm.process_heartbeat)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# if __name__ == "__main__":
+#     asyncio.run(main())
