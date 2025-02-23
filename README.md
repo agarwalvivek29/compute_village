@@ -1,7 +1,8 @@
 # 🏘️ Compute Village: The Decentralized Compute Hub 🚀
 
-![Demo Video - https://drive.google.com/drive/folders/1lfl6KyXL4vJa89B1wKFeBk2T4f1tUjCK?usp=drive_link](https://drive.google.com/drive/folders/1lfl6KyXL4vJa89B1wKFeBk2T4f1tUjCK?usp=drive_link)\n
 _A community-driven platform where anyone can share or request compute power!_
+
+Check out our platform here!! [Demo Video!](https://drive.google.com/drive/folders/1lfl6KyXL4vJa89B1wKFeBk2T4f1tUjCK?usp=drive_link)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docker Support](https://img.shields.io/badge/Docker-Supported-blue)](https://www.docker.com/)
