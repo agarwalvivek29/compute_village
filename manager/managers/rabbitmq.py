@@ -12,14 +12,24 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class RabbitMQManager:
+    _workers = {}
+
     def __init__(self):
         self.task_manager = TaskManager()
         self.connection = None
         self.channel = None
         self.queue = None
-        self.workers = {}
+        RabbitMQManager._workers = {}
         self.database_manager = DatabaseManager()
     
+    @classmethod
+    def get_workers(cls):
+        return cls._workers
+
+    @classmethod
+    def set_workers(cls, workers):
+        cls._workers = workers
+
     async def init_connection(self):
         try:
             self.connection = await aio_pika.connect_robust(
@@ -60,21 +70,26 @@ class RabbitMQManager:
     async def monitor_heartbeats(self):
         while True:
             await asyncio.sleep(10)
-            workers = self.workers.copy()
-            for worker_id, last_heartbeat in workers.items():
+            workers = RabbitMQManager._workers.copy()
+            print(f"Monitoring {len(workers.keys())} workers")
+            for worker_id, last_heartbeat in RabbitMQManager._workers.items():
                 current_time = time.time()
                 if current_time - last_heartbeat > 30:
-                    self.workers.pop(worker_id)
+                    workers.pop(worker_id)
                     self.database_manager.update_worker_status(worker_id, "inactive")
                     print(f"Worker {worker_id} marked as inactive")
+            self.set_workers(workers)
 
     def process_heartbeat(self, message):
         data = json.loads(message.body)
         worker_id = data['worker_id']
-        if worker_id not in self.workers:
+        if worker_id not in RabbitMQManager._workers:
             self.database_manager.update_worker_status(worker_id, "active")
             print(f"Worker {worker_id} marked as active")
-        self.workers[worker_id] = time.time()
+
+        workers = RabbitMQManager._workers
+        workers[worker_id] = data['timestamp']
+        self.set_workers(workers)
 
 # # Testing Driver Code
 # async def main():
