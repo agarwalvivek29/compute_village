@@ -146,7 +146,7 @@ Use **Postman**, `curl`, or the dashboard to submit a task!
 ✔️ **Worker Health** (Active, Inactive, Heartbeats)  
 ✔️ **System Metrics** (Queue stats, execution times)  
 
-🔗 Open **http://localhost:8000/dashboard** to view the live dashboard!
+🔗 Open **http://localhost:3000/dashboard** to view the live dashboard!
 
 ---
 
